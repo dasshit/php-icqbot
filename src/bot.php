@@ -8,7 +8,6 @@ use GuzzleHttp\Client;
 class Bot
 {
     private string $token;
-    private string $api_url;
     private string $parse_mode;
     private int $lastEventId = 1;
     private int $pollTime;
@@ -24,7 +23,6 @@ class Bot
         int $log_level = Logger::INFO
     )
     {
-        $this->api_url = $api_url;
         $this->token = $token;
         $this->pollTime = $pollTime;
         $this->parse_mode = $parse_mode;
@@ -491,15 +489,19 @@ class Bot
 
     public function eventsGet (): array
     {
-        $events = $this->get("/events/get", [
-            "lastEventId" => $this->lastEventId,
-            "pollTime" => $this->pollTime
-        ]);
+        try {
+            $events = $this->get("/events/get", [
+                "lastEventId" => $this->lastEventId,
+                "pollTime" => $this->pollTime
+            ]);
 
-        $lastEvent = end($events["events"]); reset($events["events"]);
+            $lastEvent = end($events["events"]); reset($events["events"]);
 
-        $this->lastEventId = $lastEvent["eventId"];
+            $this->lastEventId = $lastEvent["eventId"];
 
-        return $events;
+            return $events["events"];
+        } catch (TypeError) {
+            return [];
+        }
     }
 }
