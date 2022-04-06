@@ -2,3 +2,4 @@ main.php
 test_log.log
 vendor
 composer.lock
+*.xml
