@@ -3,12 +3,16 @@
 ```php
 <?php
 
+require __DIR__ . '/vendor/autoload.php';
+
 use Monolog\Logger;
 
-require_once('vendor/autoload.php');
+require_once __DIR__ . "/src/bot.php";
+use ICQBot\Bot\Bot;
 
-require './src/bot.php';
-require './src/events.php';
+require_once __DIR__ . "/src/types.php";
+use ICQBot\Types\Button;
+use ICQBot\Types\Keyboard;
 
 
 $bot = new Bot(
