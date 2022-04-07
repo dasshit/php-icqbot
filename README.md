@@ -24,7 +24,7 @@ $bot = new ICQ\Bot(
     'TOKEN',
     "https://api.icq.net/bot/v1", 
     log_level: Logger::DEBUG,
-    log_path: 'bot_' . date("Y-M-d") . '.log'
+    log_path: 'bot_' . date("h-i-s") . '.log'
 );
 
 
