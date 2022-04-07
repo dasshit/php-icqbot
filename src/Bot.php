@@ -1,12 +1,14 @@
 <?php
 namespace Dasshit\IcqBot {
 
+    use Exception;
     use Monolog\Logger;
     use Monolog\Handler\StreamHandler;
 
     use GuzzleHttp\Client;
     use GuzzleHttp\Exception\GuzzleException;
     use GuzzleHttp\Exception\RequestException;
+    use TypeError;
 
     /**
      * Class Bot
