@@ -4,6 +4,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
 require './src/types.php';
 
@@ -506,9 +507,9 @@ class Bot
 
                 $this->lastEventId = $lastEvent["eventId"];
             }
-
             return $events["events"];
-        } catch (TypeError) {
+        } catch (TypeError|RequestException $e) {
+            $this->logger->error($e);
             return [];
         }
     }
