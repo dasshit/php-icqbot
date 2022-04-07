@@ -1,15 +1,11 @@
 <?php
 namespace Dasshit\IcqBot {
 
-    require_once __DIR__ . "/EventsType.php";
-
     use Monolog\Logger;
     use Monolog\Handler\StreamHandler;
 
     use GuzzleHttp\Client;
     use GuzzleHttp\Exception\RequestException;
-
-    require './src/Keyboard.php';
 
     class Bot
     {
