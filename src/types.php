@@ -1,6 +1,6 @@
 <?php
 
-namespace Dasshit\ICQBot\Types {
+namespace Dasshit\ICQBot {
 
     use JsonSerializable;
 
