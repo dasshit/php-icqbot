@@ -28,7 +28,9 @@ while (true):
 
     $keyboard->addRow(
         [
-            new Button(text: "Test 2", callbackData: "test")
+            new Button(text: "Test 2", callbackData: "test"),
+            new Button(text: "Test 3", callbackData: "test"),
+            new Button(text: "Test 4", callbackData: "test")
         ]
     );
 
