@@ -7,12 +7,8 @@ require __DIR__ . '/vendor/autoload.php';
 
 use Monolog\Logger;
 
-use Dasshit\IcqBot\Bot\Bot;
-use Dasshit\IcqBot\Types\Button;
-use Dasshit\IcqBot\Types\Keyboard;
 
-
-$bot = new Bot(
+$bot = new Dasshit\IcqBot\Bot(
     'TOKEN',
     "https://api.icq.net/bot/v1",
     log_level: Logger::DEBUG,
@@ -20,7 +16,7 @@ $bot = new Bot(
 );
 
 
-$keyboard = new Keyboard();
+$keyboard = new Dasshit\IcqBot\Keyboard();
 
 $keyboard->addButton(
     new Button(text: "Test 1", url: "https://yandex.ru/")
@@ -28,18 +24,18 @@ $keyboard->addButton(
 
 $keyboard->addRow(
     [
-        new Button(text: "Test 2", callbackData: "test"),
-        new Button(text: "Test 3", callbackData: "test"),
-        new Button(text: "Test 4", callbackData: "test")
+        new Dasshit\IcqBot\Button(text: "Test 2", callbackData: "test"),
+        new Dasshit\IcqBot\Button(text: "Test 3", callbackData: "test"),
+        new Dasshit\IcqBot\Button(text: "Test 4", callbackData: "test")
     ]
 );
 
 $keyboard->addButton(
-    new Button(text: "Test 5", url: "https://yandex.ru/")
+    new Dasshit\IcqBot\Button(text: "Test 5", url: "https://yandex.ru/")
 );
 
 
-$bot->command("/start", function (Bot $bot, $event) {
+$bot->command("/start", function (Dasshit\IcqBot\Bot $bot, $event) {
 
     $bot->logger->debug($event["type"]);
 
