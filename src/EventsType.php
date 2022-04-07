@@ -1,6 +1,6 @@
 <?php
 
-namespace Dasshit\ICQBot {
+namespace Dasshit\IcqBot {
 
     enum EventsType: string
     {

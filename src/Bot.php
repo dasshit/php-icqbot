@@ -1,7 +1,7 @@
 <?php
-namespace Dasshit\ICQBot {
+namespace Dasshit\IcqBot {
 
-    require_once __DIR__ . "/events.php";
+    require_once __DIR__ . "/EventsType.php";
 
     use Monolog\Logger;
     use Monolog\Handler\StreamHandler;
@@ -9,7 +9,7 @@ namespace Dasshit\ICQBot {
     use GuzzleHttp\Client;
     use GuzzleHttp\Exception\RequestException;
 
-    require './src/types.php';
+    require './src/Keyboard.php';
 
     class Bot
     {

@@ -7,9 +7,9 @@ require __DIR__ . '/vendor/autoload.php';
 
 use Monolog\Logger;
 
-use Dasshit\ICQBot\Bot\Bot;
-use Dasshit\ICQBot\Types\Button;
-use Dasshit\ICQBot\Types\Keyboard;
+use Dasshit\IcqBot\Bot\Bot;
+use Dasshit\IcqBot\Types\Button;
+use Dasshit\IcqBot\Types\Keyboard;
 
 
 $bot = new Bot(
