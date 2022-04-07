@@ -1,3 +1,9 @@
+## Install (Composer)
+
+```
+composer require dasshit/icq_bot
+```
+
 ## Usage example
 
 ```php
@@ -7,35 +13,37 @@ require __DIR__ . '/vendor/autoload.php';
 
 use Monolog\Logger;
 
+use Dasshit\IcqBot as ICQ;
 
-$bot = new Dasshit\IcqBot\Bot(
+
+$bot = new ICQ\Bot(
     'TOKEN',
-    "https://api.icq.net/bot/v1",
+    "https://api.icq.net/bot/v1", 
     log_level: Logger::DEBUG,
     log_path: 'bot_' . date("Y-M-d") . '.log'
 );
 
 
-$keyboard = new Dasshit\IcqBot\Keyboard();
+$keyboard = new ICQ\Keyboard();
 
 $keyboard->addButton(
-    new Button(text: "Test 1", url: "https://yandex.ru/")
+    new ICQ\Button(text: "Test 1", url: "https://yandex.ru/")
 );
 
 $keyboard->addRow(
     [
-        new Dasshit\IcqBot\Button(text: "Test 2", callbackData: "test"),
-        new Dasshit\IcqBot\Button(text: "Test 3", callbackData: "test"),
-        new Dasshit\IcqBot\Button(text: "Test 4", callbackData: "test")
+        new ICQ\Button(text: "Test 2", callbackData: "test"),
+        new ICQ\Button(text: "Test 3", callbackData: "test"),
+        new ICQ\Button(text: "Test 4", callbackData: "test")
     ]
 );
 
 $keyboard->addButton(
-    new Dasshit\IcqBot\Button(text: "Test 5", url: "https://yandex.ru/")
+    new ICQ\Button(text: "Test 5", url: "https://yandex.ru/")
 );
 
 
-$bot->command("/start", function (Dasshit\IcqBot\Bot $bot, $event) {
+$bot->command("/start", function (ICQ\Bot $bot, $event) {
 
     $bot->logger->debug($event["type"]);
 
