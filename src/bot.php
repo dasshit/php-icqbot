@@ -1,8 +1,8 @@
 <?php
-namespace ICQBot\Bot {
+namespace Dasshit\ICQBot\Bot {
 
     require_once __DIR__ . "/events.php";
-    use ICQBot\Events\EventsType;
+    use Dasshit\ICQBot\Events\EventsType;
     use Monolog\Logger;
     use Monolog\Handler\StreamHandler;
 

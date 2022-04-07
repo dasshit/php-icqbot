@@ -1,6 +1,22 @@
 {
+    "name": "dasshit/icq_bot",
+    "description": "This is PHP ICQ/VK Teams Bot library.",
+    "type": "library",
     "require": {
         "guzzlehttp/guzzle": "^7.4",
         "monolog/monolog": "^2.4"
-    }
+    },
+    "license": "MIT License",
+    "autoload": {
+        "psr-4": {
+            "Dasshit\\IcqBot\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "v.korobov",
+            "email": "v.korobov@corp.mail.ru"
+        }
+    ],
+    "minimum-stability": "dev"
 }
