@@ -6,7 +6,7 @@
         "guzzlehttp/guzzle": "^7.4",
         "monolog/monolog": "^2.4"
     },
-    "license": "MIT License",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Dasshit\\IcqBot\\": "src/"
