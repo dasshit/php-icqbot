@@ -13,20 +13,42 @@ require './src/events.php';
 
 $bot = new Bot(
     'TOKEN',
-    "https://api.icq.net/bot/v1", 
+    "https://api.icq.net/bot/v1",
     log_level: Logger::DEBUG
 );
 
 
 while (true):
 
+    $keyboard = new Keyboard();
+
+    $keyboard->addButton(
+        new Button(text: "Test 1", url: "https://yandex.ru/")
+    );
+
+    $keyboard->addRow(
+        [
+            new Button(text: "Test 2", callbackData: "test")
+        ]
+    );
+
     foreach ($bot->eventsGet() as &$event) {
 
-        if ($event["type"] == EventsType::NEW_MESSAGE->value) {
+        $chatId = $event["payload"]["chat"]["chatId"];
 
-            $bot->sendText($event["payload"]["chat"]["chatId"], $event["payload"]["text"]);
+        match ($event["type"]) {
+            EventsType::NEW_MESSAGE->value => $bot->sendText(
+                $chatId, $event["payload"]["text"],
+                inlineKeyboardMarkup: $keyboard
+            ),
 
-        }
+            EventsType::EDITED_MESSAGE->value => $bot->sendText(
+                $chatId, "@[$chatId]",
+                inlineKeyboardMarkup: $keyboard
+            ),
+
+        };
+
     }
 
     endwhile;
