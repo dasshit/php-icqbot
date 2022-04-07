@@ -5,6 +5,8 @@ use Monolog\Handler\StreamHandler;
 
 use GuzzleHttp\Client;
 
+require './src/types.php';
+
 class Bot
 {
     private string $token;
@@ -91,7 +93,7 @@ class Bot
         string|int|null $replyMsgId = NULL,
         string|null $forwardChatId = NULL,
         array|null $forwardMsgId = NULL,
-        array|null $inlineKeyboardMarkup = NULL,
+        array|Keyboard|null $inlineKeyboardMarkup = NULL,
         object|null $format = NULL,
         string|null $parseMode = NULL,
     ): array
@@ -120,7 +122,7 @@ class Bot
         array|NULL $replyMsgId = NULL,
         string|NULL $forwardChatId = NULL,
         array|NULL $forwardMsgId = NULL,
-        array|NULL $inlineKeyboardMarkup = NULL,
+        array|Keyboard|null $inlineKeyboardMarkup = NULL,
         object|NULL $format = NULL,
         string|NULL $parseMode = NULL,
     )
@@ -167,7 +169,7 @@ class Bot
         array|NULL $replyMsgId = NULL,
         string|NULL $forwardChatId = NULL,
         array|NULL $forwardMsgId = NULL,
-        array|NULL $inlineKeyboardMarkup = NULL,
+        array|Keyboard|null $inlineKeyboardMarkup = NULL,
         object|NULL $format = NULL,
         string|NULL $parseMode = NULL,
     )
@@ -213,7 +215,7 @@ class Bot
         string|int|null $replyMsgId = NULL,
         string|null $forwardChatId = NULL,
         array|null $forwardMsgId = NULL,
-        array|null $inlineKeyboardMarkup = NULL,
+        array|Keyboard|null $inlineKeyboardMarkup = NULL,
         object|null $format = NULL,
         string|null $parseMode = NULL,
     ): array
@@ -495,9 +497,11 @@ class Bot
                 "pollTime" => $this->pollTime
             ]);
 
-            $lastEvent = end($events["events"]); reset($events["events"]);
+            if ($events["events"]){
+                $lastEvent = end($events["events"]); reset($events["events"]);
 
-            $this->lastEventId = $lastEvent["eventId"];
+                $this->lastEventId = $lastEvent["eventId"];
+            }
 
             return $events["events"];
         } catch (TypeError) {
