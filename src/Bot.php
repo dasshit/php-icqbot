@@ -624,12 +624,8 @@ namespace Dasshit\IcqBot {
 
                 foreach ($this->eventsGet() as &$event) {
 
-                    $this->logger->debug(json_encode($event));
-
                     if ($event["type"] == EventsType::NEW_MESSAGE->value) {
                         foreach ($this->commands as $command) {
-
-                            $this->logger->debug($command);
 
                             if (str_starts_with($event["payload"]["text"], $command)) {
                                 foreach ($this->eventCheckers[$command] as $eventChecker) {
