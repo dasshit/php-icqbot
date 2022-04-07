@@ -5,8 +5,13 @@ namespace Dasshit\IcqBot {
     use Monolog\Handler\StreamHandler;
 
     use GuzzleHttp\Client;
+    use GuzzleHttp\Exception\GuzzleException;
     use GuzzleHttp\Exception\RequestException;
 
+    /**
+     * Class Bot
+     * @package Dasshit\IcqBot
+     */
     class Bot
     {
         private string $token;
@@ -20,6 +25,14 @@ namespace Dasshit\IcqBot {
         private Client $session;
         public Logger $logger;
 
+        /**
+         * @param string token Токен бота
+         * @param string api_url URL bot API
+         * @param string parse_mode Режим разбора форматирования текстового сообщения
+         * @param int pollTime Максимальная длительность polling-запроса событий
+         * @param int log_level Уровень логирования
+         * @param string log_path Путь до файла с логами
+         */
         public function __construct(
             string $token,
             string $api_url = "https://api.icq.net/bot/v1",
@@ -48,6 +61,12 @@ namespace Dasshit\IcqBot {
             $this->logger->info("Bot finished: " . $this->token);
         }
 
+        /**
+         * @param string $path Path запроса к API
+         * @param array $query Query параметры запроса
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         private function get(string $path, array $query): array
         {
             $query += ["token" => $this->token];
@@ -67,6 +86,13 @@ namespace Dasshit\IcqBot {
             return json_decode($result, true);
         }
 
+        /**
+         * @param string $path Path запроса к API
+         * @param array $query Query параметры запроса
+         * @param string $file_path Путь к отправляемому файлу
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         private function post(string $path, array $query, string $file_path): array
         {
             $query += ["token" => $this->token];
@@ -91,6 +117,18 @@ namespace Dasshit\IcqBot {
             return json_decode($result, true);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string $text Текст сообщения
+         * @param string|int|null $replyMsgId ID сообщения, на которое бот отвечает
+         * @param string|null $forwardChatId ID чата пересылаемого сообщения
+         * @param array|null $forwardMsgId ID пересылаемого сообщения
+         * @param array|Keyboard|null $inlineKeyboardMarkup Кнопки к сообщению бота
+         * @param object|null $format Форматирование текста (Только для ручного форматирования текста)
+         * @param string|null $parseMode Режим форматирования текста сообщения
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function sendText(
             string              $chatId,
             string              $text,
@@ -118,18 +156,32 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string|null $fileId ID отправляемого файла (Только для уже загруженных файлов)
+         * @param string|null $filePath Путь к загружаемому файлу
+         * @param string|null $caption Описание к отправляемому файлу
+         * @param string|int|null $replyMsgId ID сообщения, на которое бот отвечает
+         * @param string|null $forwardChatId ID чата пересылаемого сообщения
+         * @param array|null $forwardMsgId ID пересылаемого сообщения
+         * @param array|Keyboard|null $inlineKeyboardMarkup Кнопки к сообщению бота
+         * @param object|null $format Форматирование текста (Только для ручного форматирования текста)
+         * @param string|null $parseMode Режим форматирования текста сообщения
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function sendFile(
             string              $chatId,
             string|null         $fileId = NULL,
             string|null         $filePath = NULL,
             string|null         $caption = NULL,
-            array|null          $replyMsgId = NULL,
+            string|int|null     $replyMsgId = NULL,
             string|null         $forwardChatId = NULL,
             array|null          $forwardMsgId = NULL,
             array|Keyboard|null $inlineKeyboardMarkup = NULL,
             object|null         $format = NULL,
             string|null         $parseMode = NULL,
-        )
+        ): array
         {
             if ($parseMode == NULL) {
                 $parseMode = $this->parse_mode;
@@ -165,12 +217,26 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string|null $fileId ID отправляемого файла (Только для уже загруженных файлов)
+         * @param string|null $filePath Путь к загружаемому файлу
+         * @param string|null $caption Описание к отправляемому файлу
+         * @param string|int|null $replyMsgId ID сообщения, на которое бот отвечает
+         * @param string|null $forwardChatId ID чата пересылаемого сообщения
+         * @param array|null $forwardMsgId ID пересылаемого сообщения
+         * @param array|Keyboard|null $inlineKeyboardMarkup Кнопки к сообщению бота
+         * @param object|null $format Форматирование текста (Только для ручного форматирования текста)
+         * @param string|null $parseMode Режим форматирования текста сообщения
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function sendVoice(
             string              $chatId,
             string|null         $fileId = NULL,
             string|null         $filePath = NULL,
             string|null         $caption = NULL,
-            array|null          $replyMsgId = NULL,
+            string|int|null     $replyMsgId = NULL,
             string|null         $forwardChatId = NULL,
             array|null          $forwardMsgId = NULL,
             array|Keyboard|null $inlineKeyboardMarkup = NULL,
@@ -212,6 +278,19 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string|int $msgId ID редактируемого сообщения
+         * @param string $text Новый текст сообщения
+         * @param string|int|null $replyMsgId ID сообщения, на которое бот отвечает
+         * @param string|null $forwardChatId ID чата пересылаемого сообщения
+         * @param array|null $forwardMsgId ID пересылаемого сообщения
+         * @param array|Keyboard|null $inlineKeyboardMarkup Кнопки к сообщению бота
+         * @param object|null $format Форматирование текста (Только для ручного форматирования текста)
+         * @param string|null $parseMode Режим форматирования текста сообщения
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function editText(
             string              $chatId,
             string|int          $msgId,
@@ -243,6 +322,12 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string|int $msgId ID удаляемого сообщения
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function deleteMessage(
             string     $chatId,
             string|int $msgId
@@ -254,6 +339,14 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $queryId Идентификатор callback query полученного ботом
+         * @param string|null $text Текст нотификации, который будет отображен пользователю. В случае, если текст не задан – ничего не будет отображено.
+         * @param bool $showAlert Если выставить значение в true, вместо нотификации будет показан alert
+         * @param string|null $url URL, который будет открыт клиентским приложением
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function answerCallbackQuery(
             string      $queryId,
             string|null $text = NULL,
@@ -269,6 +362,17 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $name Название чата.
+         * @param string|null $about Описание чата.
+         * @param string|null $rules Правила чата.
+         * @param array $members Список пользователей
+         * @param bool $public Публичность чата
+         * @param string $defaultRole Роль по умолчанию ('member' для групп, 'readonly' для каналов)
+         * @param bool $joinModeration Требуется ли подтверждение вступления.
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function createChat(
             string      $name,
             string|null $about = NULL,
@@ -290,6 +394,12 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param array $members Список пользователей
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatMembersAdd(
             string $chatId,
             array  $members,
@@ -301,6 +411,12 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param array $members Список пользователей
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatMembersDelete(
             string $chatId,
             array  $members,
@@ -312,6 +428,12 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string $action Текущие действия в чате. Отправьте пустое значение, если все действия завершены.
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatsSendAction(
             string $chatId,
             string $action
@@ -323,6 +445,11 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatGetInfo(
             string $chatId,
         ): array
@@ -332,6 +459,11 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatGetAdmins(
             string $chatId,
         ): array
@@ -341,6 +473,11 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatGetMembers(
             string $chatId,
         ): array
@@ -350,6 +487,11 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatGetBlockedUsers(
             string $chatId,
         ): array
@@ -359,6 +501,11 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatGetPendingUsers(
             string $chatId,
         ): array
@@ -368,6 +515,13 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string $userId Уникальный ник или id пользователя.
+         * @param bool $delLastMessages Удаление последних сообщений заданного пользователя в чате.
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatsBlockUser(
             string $chatId,
             string $userId,
@@ -381,7 +535,13 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
-        public function chatsUNblockUser(
+        /**
+         * @param string $chatId ID чата
+         * @param string $userId Уникальный ник или id пользователя.
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
+        public function chatsUnblockUser(
             string $chatId,
             string $userId,
         ): array
@@ -392,6 +552,14 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param bool $approve Положительное или отрицательное решение.
+         * @param string|null $userId Ник или id пользователя, ожидающего вступления в чат. Не может быть передано с параметром everyone.
+         * @param bool|null $everyone Решение обо всех пользователях, ожидающих вступления в чат. Не может быть передано с параметром userId.
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatsResolvePending(
             string      $chatId,
             bool        $approve,
@@ -416,6 +584,12 @@ namespace Dasshit\IcqBot {
             }
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string $title Название чата.
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatsSetTitle(
             string $chatId,
             string $title,
@@ -427,6 +601,12 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string $image_path Путь к изображению
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatsAvatarSet(
             string $chatId,
             string $image_path,
@@ -438,6 +618,12 @@ namespace Dasshit\IcqBot {
                 $image_path);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string $about Описание чата.
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatsSetAbout(
             string $chatId,
             string $about,
@@ -449,6 +635,12 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string $rules Правила чата
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function chatsSetRules(
             string $chatId,
             string $rules,
@@ -460,6 +652,12 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string|int $msgId ID сообщения
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function pinMessage(
             string     $chatId,
             string|int $msgId
@@ -471,6 +669,12 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $chatId ID чата
+         * @param string|int $msgId ID сообщения
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function unpinMessage(
             string     $chatId,
             string|int $msgId
@@ -482,6 +686,11 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @param string $fileId ID файла
+         * @return array Ответ API на запрос
+         * @throws GuzzleException
+         */
         public function filesGetInfo(
             string $fileId
         ): array
@@ -491,6 +700,10 @@ namespace Dasshit\IcqBot {
             ]);
         }
 
+        /**
+         * @return array
+         * @throws GuzzleException
+         */
         public function eventsGet(): array
         {
             try {
@@ -512,7 +725,13 @@ namespace Dasshit\IcqBot {
             }
         }
 
-        public function on(
+        /**
+         * @param $event_type
+         * @param callable $lambda Функция-обработчик события
+         * @param string|null $cmd Команда
+         * @return void
+         */
+        private function on(
             $event_type,
             callable $lambda,
             ?string $cmd = NULL,
@@ -526,6 +745,10 @@ namespace Dasshit\IcqBot {
             }
         }
 
+        /**
+         * @param callable $lambda Функция-обработчик события
+         * @return void
+         */
         public function onMessage(
             callable $lambda,
         ): void
@@ -536,6 +759,11 @@ namespace Dasshit\IcqBot {
             );
         }
 
+        /**
+         * @param callable $lambda Функция-обработчик события
+         * @param string $cmd Команда в сообщении
+         * @return void
+         */
         public function command(
             string   $cmd,
             callable $lambda,
@@ -548,6 +776,10 @@ namespace Dasshit\IcqBot {
             );
         }
 
+        /**
+         * @param callable $lambda Функция-обработчик события
+         * @return void
+         */
         public function onEditedMessage(
             callable $lambda
         ): void
@@ -558,6 +790,10 @@ namespace Dasshit\IcqBot {
             );
         }
 
+        /**
+         * @param callable $lambda Функция-обработчик события
+         * @return void
+         */
         public function onDeletedMessage(
             callable $lambda,
         ): void
@@ -568,6 +804,10 @@ namespace Dasshit\IcqBot {
             );
         }
 
+        /**
+         * @param callable $lambda Функция-обработчик события
+         * @return void
+         */
         public function onPinnedMessage(
             callable $lambda,
         ): void
@@ -578,6 +818,10 @@ namespace Dasshit\IcqBot {
             );
         }
 
+        /**
+         * @param callable $lambda Функция-обработчик события
+         * @return void
+         */
         public function onUnpinnedMessage(
             callable $lambda
         ): void
@@ -588,6 +832,10 @@ namespace Dasshit\IcqBot {
             );
         }
 
+        /**
+         * @param callable $lambda Функция-обработчик события
+         * @return void
+         */
         public function onNewChatMember(
             callable $lambda,
         ): void
@@ -598,6 +846,10 @@ namespace Dasshit\IcqBot {
             );
         }
 
+        /**
+         * @param callable $lambda Функция-обработчик события
+         * @return void
+         */
         public function onLeftChatMember(
             callable $lambda
         ): void
@@ -608,6 +860,10 @@ namespace Dasshit\IcqBot {
             );
         }
 
+        /**
+         * @param callable $lambda Функция-обработчик события
+         * @return void
+         */
         public function onCallbackQuery(
             callable $lambda
         ): void
@@ -618,6 +874,9 @@ namespace Dasshit\IcqBot {
             );
         }
 
+        /**
+         * @return void
+         */
         public function pollEvents(): void
         {
             while (true):
