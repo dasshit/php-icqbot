@@ -4,6 +4,10 @@ namespace Dasshit\IcqBot;
 
 use JsonSerializable;
 
+/**
+ * class Button
+ * @package Dasshit\IcqBot
+ */
 class Button implements JsonSerializable
 {
     private string $text;
@@ -11,6 +15,12 @@ class Button implements JsonSerializable
     private ?string $callbackData;
     private string $style;
 
+    /**
+     * @param string $text Текст
+     * @param string|null $url URL для перехода по клику
+     * @param string|null $callbackData callback query для отправки боту
+     * @param string $style Стиль кнопки (цвет текста на ней)
+     */
     public function __construct(
         string  $text,
         ?string $url = NULL,
@@ -24,6 +34,9 @@ class Button implements JsonSerializable
         $this->style = $style;
     }
 
+    /**
+     * @return array
+     */
     public function jsonSerialize(): array
     {
 

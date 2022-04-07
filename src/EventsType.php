@@ -3,7 +3,8 @@
 namespace Dasshit\IcqBot {
 
     /**
-     * Перечисление типов событий
+     * enum EventsType
+     * @package Dasshit\IcqBot
      */
     enum EventsType: string
     {
