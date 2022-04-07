@@ -22,7 +22,8 @@ class Bot
         string $api_url = "https://api.icq.net/bot/v1",
         string $parse_mode = "HTML",
         int $pollTime = 30,
-        int $log_level = Logger::INFO
+        int $log_level = Logger::INFO,
+        string $log_path = "./test_log.log"
     )
     {
         $this->token = $token;
@@ -34,7 +35,7 @@ class Bot
         ]);
 
         $this->logger = new Logger('bot');
-        $this->logger->pushHandler(new StreamHandler('./test_log.log', $log_level));  //
+        $this->logger->pushHandler(new StreamHandler($log_path, $log_level));  //
 
         $this->logger->info("Bot started: $token -> $api_url");
     }
