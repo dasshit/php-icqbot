@@ -9,7 +9,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Dasshit\\ICQBot\\": "src/"
+            "Dasshit\\IcqBot\\": "src/"
         }
     },
     "authors": [
