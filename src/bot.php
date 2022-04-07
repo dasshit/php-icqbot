@@ -14,6 +14,9 @@ class Bot
     private int $lastEventId = 1;
     private int $pollTime;
 
+    private array $eventCheckers = [];
+    private array $commands = [];
+
     private GuzzleHttp\Client $session;
     public Logger $logger;
 
@@ -508,5 +511,146 @@ class Bot
         } catch (TypeError) {
             return [];
         }
+    }
+
+    public function on (
+        $event_type,
+        callable $lambda,
+        ?string $cmd = NULL,
+    ): void
+    {
+        if ($cmd != NULL and $event_type == EventsType::NEW_MESSAGE) {
+            $this->commands[] = $cmd;
+            $this->eventCheckers[$cmd][] = $lambda;
+        } else {
+            $this->eventCheckers[$event_type->value][] = $lambda;
+        }
+    }
+
+    public function onMessage (
+        callable $lambda,
+    ): void
+    {
+        $this->on(
+            EventsType::NEW_MESSAGE,
+            $lambda
+        );
+    }
+
+    public function command (
+        string $cmd,
+        callable $lambda,
+    ): void
+    {
+        $this->on(
+            EventsType::NEW_MESSAGE,
+            $lambda,
+            $cmd
+        );
+    }
+
+    public function onEditedMessage (
+        callable $lambda
+    ): void
+    {
+        $this->on(
+            EventsType::EDITED_MESSAGE,
+            $lambda
+        );
+    }
+
+    public function onDeletedMessage (
+        callable $lambda,
+    ): void
+    {
+        $this->on(
+            EventsType::DELETED_MESSAGE,
+            $lambda
+        );
+    }
+
+    public function onPinnedMessage (
+        callable $lambda,
+    ): void
+    {
+        $this->on(
+            EventsType::PINNED_MESSAGE,
+            $lambda
+        );
+    }
+
+    public function onUnpinnedMessage (
+        callable $lambda
+    ): void
+    {
+        $this->on(
+            EventsType::UNPINNED_MESSAGE,
+            $lambda
+        );
+    }
+
+    public function onNewChatMember (
+        callable $lambda,
+    ): void
+    {
+        $this->on(
+            EventsType::NEW_CHAT_MEMBER,
+            $lambda
+        );
+    }
+
+    public function onLeftChatMember (
+        callable $lambda
+    ): void
+    {
+        $this->on(
+            EventsType::LEFT_CHAT_MEMBER,
+            $lambda
+        );
+    }
+
+    public function onCallbackQuery (
+        callable $lambda
+    ): void
+    {
+        $this->on(
+            EventsType::CALLBACK_QUERY,
+            $lambda
+        );
+    }
+
+    public function pollEvents(): void
+    {
+        while (true):
+
+            foreach ($this->eventsGet() as &$event) {
+
+                $this->logger->debug(json_encode($event));
+
+                if ($event["type"] == EventsType::NEW_MESSAGE->value) {
+                    foreach ($this->commands as $command) {
+
+                        $this->logger->debug($command);
+
+                        if (str_starts_with($event["payload"]["text"], $command)) {
+                            foreach ($this->eventCheckers[$command] as $eventChecker) {
+                                $eventChecker($this, $event);
+                            }
+
+                            continue 3;
+                        }
+                    }
+                }
+
+                if (array_key_exists($event["type"], $this->eventCheckers)) {
+
+                    foreach ($this->eventCheckers[$event["type"]] as $eventChecker) {
+                        $eventChecker($this, $event);
+                    }
+                }
+
+            }
+
+        endwhile;
     }
 }
