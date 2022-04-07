@@ -2,6 +2,9 @@
 
 namespace Dasshit\IcqBot {
 
+    /**
+     * Перечисление типов событий
+     */
     enum EventsType: string
     {
         case NEW_MESSAGE = "newMessage";
