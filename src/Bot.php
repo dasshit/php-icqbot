@@ -24,6 +24,8 @@ namespace Dasshit\IcqBot {
         private array $eventCheckers = [];
         private array $commands = [];
 
+        private ?array $proxy;
+
         private Client $session;
         public Logger $logger;
 
@@ -32,6 +34,7 @@ namespace Dasshit\IcqBot {
          * @param string api_url URL bot API
          * @param string parse_mode Режим разбора форматирования текстового сообщения
          * @param int pollTime Максимальная длительность polling-запроса событий
+         * @param array|NULL proxy Параметры прокси (поддерживаемые GuzzleHttp/Client
          * @param int log_level Уровень логирования
          * @param string log_path Путь до файла с логами
          */
@@ -40,6 +43,7 @@ namespace Dasshit\IcqBot {
             string $api_url = "https://api.icq.net/bot/v1",
             string $parse_mode = "HTML",
             int    $pollTime = 30,
+            ?array $proxy = NULL,
             int    $log_level = Logger::INFO,
             string $log_path = "./test_log.log"
         )
@@ -51,6 +55,8 @@ namespace Dasshit\IcqBot {
             $this->session = new Client([
                 'base_uri' => $api_url,
             ]);
+
+            $this->proxy = $proxy;
 
             $this->logger = new Logger('bot');
             $this->logger->pushHandler(new StreamHandler($log_path, $log_level));  //
@@ -80,7 +86,8 @@ namespace Dasshit\IcqBot {
             $this->logger->debug("[GET] /bot/v1" . $path);
 
             $result = $this->session->get("/bot/v1" . $path, [
-                "query" => $filtered_query
+                "query" => $filtered_query,
+                "proxy" => $this->proxy
             ])->getBody();
 
             $this->logger->debug($result);
@@ -107,6 +114,7 @@ namespace Dasshit\IcqBot {
 
             $result = $this->session->post("/bot/v1" . $path, [
                 "query" => $filtered_query,
+                "proxy" => $this->proxy,
                 "multipart" => [[
                     "name" => "file",
                     "filename" => basename($file_path),
